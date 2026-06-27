@@ -286,14 +286,15 @@ exports.delivery = async (req, res) => {
          const plainOrder = order.toObject();
         sendOrderEmail(plainOrder).then(async () => {
             order.emailSent = true;
+            console.log("hello");
             await order.save();
         }).catch(err => console.error("Email failed (order still saved):", err));
 
         return res.status(200).json({
             success: true,
             message: "Order placed! Confirmation email sent.",
-            orderId: order._id,
-            total:   order.total,
+            orderId: plainOrder._id,
+            total:   plainOrder.total,
         });
     } catch (error) {
         console.error("Delivery error:", error);
