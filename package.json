@@ -7,18 +7,13 @@
     "start": "node index.js",
     "dev": "nodemon index.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/this-gourav/Clothes-website.git"
-  },
+  
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/this-gourav/Clothes-website/issues"
-  },
-  "homepage": "https://github.com/this-gourav/Clothes-website#readme",
+  
+  
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
