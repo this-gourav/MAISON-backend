@@ -361,9 +361,9 @@ exports.delivery = async (req, res) => {
         await cartDoc.save();
 
         // Send email non-blocking
-         const plainOrder = order.toObject();
+        const plainOrder = order.toObject();
         sendOrderEmail(plainOrder).then(async () => {
-            order.emailSent = true;
+            plainOrder.emailSent = true;
             console.log("hello");
             await order.save();
         }).catch(err => console.error("Email failed (order still saved):", err));
