@@ -12,9 +12,9 @@ require("dotenv").config();
 ───────────────────────────────────────────────────────────── */
 let transporter = nodemailer.createTransport({
     service: "gmail",
-    secure: true,
+    secure: false,
     family: 4,
-   
+    port:587,
     auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
@@ -23,6 +23,8 @@ let transporter = nodemailer.createTransport({
   greetingTimeout: 30000,
   socketTimeout: 30000,
 });
+
+
 transporter.verify((err, success) => {
      console.log( process.env.MAIL_USER),
      console.log(process.env.MAIL_PASS)
