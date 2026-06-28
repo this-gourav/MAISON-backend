@@ -19,6 +19,9 @@ let transporter = nodemailer.createTransport({
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
     },
+    connectionTimeout: 30000,
+  greetingTimeout: 30000,
+  socketTimeout: 30000,
 });
 transporter.verify((err, success) => {
      console.log( process.env.MAIL_USER),
