@@ -3,39 +3,123 @@ const Cart       = require("../models/cart");
 const Order      = require("../models/product");
 const bcrypt     = require("bcrypt");
 const jwt        = require("jsonwebtoken");
-const nodemailer = require("nodemailer");
+// const nodemailer = require("nodemailer");
 require("dotenv").config();
+const { Resend } = require("resend");
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 
 /* ─────────────────────────────────────────────────────────────
    NODEMAILER TRANSPORTER
    Set MAIL_USER and MAIL_PASS (Gmail App Password) in .env
 ───────────────────────────────────────────────────────────── */
-let transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    family: 4,
-    auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
-    },
-    connectionTimeout: 30000,
-  greetingTimeout: 30000,
-  socketTimeout: 30000,
-});
+// let transporter = nodemailer.createTransport({
+//     host: "smtp.gmail.com",
+//     family: 4,
+//     auth: {
+//         user: process.env.MAIL_USER,
+//         pass: process.env.MAIL_PASS,
+//     },
+//     connectionTimeout: 30000,
+//   greetingTimeout: 30000,
+//   socketTimeout: 30000,
+// });
 
 
-transporter.verify((err, success) => {
-     console.log( process.env.MAIL_USER),
-     console.log(process.env.MAIL_PASS)
+// transporter.verify((err, success) => {
+//      console.log( process.env.MAIL_USER),
+//      console.log(process.env.MAIL_PASS)
 
-    if (err) {
-        console.log("SMTP Error:", err);
-    } else {
-        console.log("SMTP Server is Ready");
-    }
-});
-/* ─────────────────────────────────────────────────────────────
-   EMAIL HELPER
-───────────────────────────────────────────────────────────── */
+//     if (err) {
+//         console.log("SMTP Error:", err);
+//     } else {
+//         console.log("SMTP Server is Ready");
+//     }
+// });
+// // /* ─────────────────────────────────────────────────────────────
+//    EMAIL HELPER
+// ───────────────────────────────────────────────────────────── */
+
+
+// async function sendOrderEmail(order) {
+//     const { delivery, items, total, email, _id } = order;
+//     console.log("Hello Jee");
+//     console.log(order);
+
+//     const itemRows = items.map(items => `
+//         <tr>
+//           <td style="padding:12px;border-bottom:1px solid #f0e8e0;">
+//             <img src="${items.img}" width="60"
+//               style="border-radius:4px;vertical-align:middle;margin-right:12px;" alt="${items.name}"/>
+//             <span style="font-size:14px;color:#1a1714;">${items.name}</span>
+//             <span style="display:block;font-size:11px;color:#7a7672;margin-top:2px;margin-left:72px;">${items.category}</span>
+//           </td>
+//           <td style="padding:12px;border-bottom:1px solid #f0e8e0;text-align:center;font-size:14px;color:#1a1714;">${items.qty}</td>
+//           <td style="padding:12px;border-bottom:1px solid #f0e8e0;text-align:right;font-size:14px;color:#1a1714;">
+//             Rs.${items.lineTotal.toLocaleString("en-IN")}
+//           </td>
+//         </tr>`).join("");
+//   console.log("Hello dear");
+//     const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"/></head>
+//     <body style="margin:0;padding:0;background:#f9f4ef;font-family:Arial,sans-serif;">
+//       <div style="max-width:600px;margin:32px auto;background:#fefefe;border-radius:8px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+//         <div style="background:#1a1714;padding:32px 40px;text-align:center;">
+//           <h1 style="color:#fefefe;font-family:Georgia,serif;font-weight:300;font-size:2rem;letter-spacing:0.22em;margin:0;">MAISON</h1>
+//           <p style="color:rgba(255,255,255,0.4);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;margin:6px 0 0;">Luxury Fashion</p>
+//         </div>
+//         <div style="background:#27ae60;padding:14px 40px;text-align:center;">
+//           <p style="color:#fff;font-size:14px;margin:0;">Order Confirmed</p>
+//         </div>
+//         <div style="padding:36px 40px 28px;">
+//           <h2 style="font-family:Georgia,serif;font-weight:300;font-size:1.5rem;color:#1a1714;margin:0 0 8px;">Thank you, ${delivery.FullName}!</h2>
+//           <p style="color:#7a7672;font-size:14px;margin:0 0 6px;">Your order has been placed. We will notify you once it ships.</p>
+//           <p style="color:#b0aba6;font-size:12px;margin:0 0 28px;">Order ID: <strong style="color:#1a1714;">${_id}</strong></p>
+//           <p style="font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#839788;margin:0 0 10px;">Your Items</p>
+//           <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #f0e8e0;border-radius:6px;overflow:hidden;margin-bottom:28px;">
+//             <thead>
+//               <tr style="background:#faf0e8;">
+//                 <th style="padding:10px 12px;text-align:left;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#7a7672;font-weight:400;">Product</th>
+//                 <th style="padding:10px 12px;text-align:center;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#7a7672;font-weight:400;">Qty</th>
+//                 <th style="padding:10px 12px;text-align:right;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#7a7672;font-weight:400;">Amount</th>
+//               </tr>
+//             </thead>
+//             <tbody>${itemRows}</tbody>
+//             <tfoot>
+//               <tr style="background:#faf0e8;">
+//                 <td colspan="2" style="padding:14px 12px;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#7a7672;">Grand Total</td>
+//                 <td style="padding:14px 12px;text-align:right;font-family:Georgia,serif;font-size:1.3rem;color:#1a1714;">Rs.${total.toLocaleString("en-IN")}</td>
+//               </tr>
+//             </tfoot>
+//           </table>
+//           <p style="font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#839788;margin:0 0 10px;">Delivery Address</p>
+//           <div style="background:#faf0e8;border-radius:6px;padding:20px 22px;margin-bottom:28px;">
+//             <p style="font-size:14px;color:#1a1714;margin:0;line-height:1.8;">
+//               <strong>${delivery.FullName}</strong><br/>
+//               ${delivery.Address}<br/>
+//               ${delivery.city}, ${delivery.State} - ${delivery.Pincode}<br/>
+//               Ph: ${delivery.PhoneNumber}
+//             </p>
+//           </div>
+//           <p style="font-size:13px;color:#7a7672;">Questions? Email <a href="mailto:hello@maisonluxury.com" style="color:#839788;">hello@maisonluxury.com</a></p>
+//         </div>
+//         <div style="background:#1a1714;padding:20px 40px;text-align:center;">
+//           <p style="color:rgba(255,255,255,0.3);font-size:11px;margin:0;">© 2025 MAISON · 12 Textile Lane, Mumbai 400001</p>
+//         </div>
+//       </div>
+//     </body></html>`;
+
+
+
+//      await transporter.sendMail({
+//         from:    `"MAISON Luxury Fashion" <${process.env.MAIL_USER}>`,
+//         to:      email,
+//         subject: `MAISON Order Confirmed - #${_id}`,
+//         html:html ,
+//     });
+      
+// }
+
+
 async function sendOrderEmail(order) {
     const { delivery, items, total, email, _id } = order;
     console.log("Hello Jee");
@@ -54,7 +138,9 @@ async function sendOrderEmail(order) {
             Rs.${items.lineTotal.toLocaleString("en-IN")}
           </td>
         </tr>`).join("");
-  console.log("Hello dear");
+
+    console.log("Hello Dear");
+
     const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"/></head>
     <body style="margin:0;padding:0;background:#f9f4ef;font-family:Arial,sans-serif;">
       <div style="max-width:600px;margin:32px auto;background:#fefefe;border-radius:8px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
@@ -103,18 +189,13 @@ async function sendOrderEmail(order) {
       </div>
     </body></html>`;
 
-
-
-     await transporter.sendMail({
-        from:    `"MAISON Luxury Fashion" <${process.env.MAIL_USER}>`,
+    await resend.emails.send({
+        from:    "MAISON Luxury Fashion <onboarding@resend.dev>",
         to:      email,
         subject: `MAISON Order Confirmed - #${_id}`,
-        html:html ,
+        html:    html,
     });
-      
 }
-
-
 /* ─────────────────────────────────────────────────────────────
    SIGNUP
 ───────────────────────────────────────────────────────────── */
