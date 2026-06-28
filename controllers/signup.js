@@ -11,8 +11,8 @@ require("dotenv").config();
    Set MAIL_USER and MAIL_PASS (Gmail App Password) in .env
 ───────────────────────────────────────────────────────────── */
 let transporter = nodemailer.createTransport({
-    service: "gmail",
-    secure: false,
+    host: "smtp.gmail.com",
+    secure: true,
     family: 4,
     port:465,
     auth: {
