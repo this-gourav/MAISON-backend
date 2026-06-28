@@ -13,6 +13,7 @@ require("dotenv").config();
 let transporter = nodemailer.createTransport({
     service: "gmail",
     secure: true,
+    family: 4,
    
     auth: {
         user: process.env.MAIL_USER,
@@ -101,19 +102,13 @@ async function sendOrderEmail(order) {
 
 
 
-    let info;
-       try{
-      info = await transporter.sendMail({
+     await transporter.sendMail({
         from:    `"MAISON Luxury Fashion" <${process.env.MAIL_USER}>`,
         to:      email,
         subject: `MAISON Order Confirmed - #${_id}`,
         html:html ,
     });
-      }catch(error){
-        console.log("INFO",info),
-        console.log(error)
-
-}
+      
 }
 
 
